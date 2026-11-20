@@ -1,0 +1,9 @@
+model,n,valid,fallback,success_rate_pct
+persistence,260,260,0,100.0
+snaive,260,260,0,100.0
+ets,260,260,0,100.0
+arima,260,260,0,100.0
+qwen_noctx,260,255,5,98.07692307692308
+qwen_ctx,260,260,0,100.0
+timeomni_noctx,260,255,5,98.07692307692308
+timeomni_ctx,260,251,9,96.53846153846153

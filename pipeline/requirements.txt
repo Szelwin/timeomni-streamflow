@@ -1,0 +1,9 @@
+aiohttp
+numpy
+pandas
+pytest
+tqdm
+transformers   # tokenizer only (no torch needed)
+statsmodels
+scipy
+matplotlib

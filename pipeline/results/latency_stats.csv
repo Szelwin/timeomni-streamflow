@@ -1,0 +1,5 @@
+model,context,n,latency_median_s,latency_mean_s,latency_max_s,latency_sum_s,completion_tokens_median,completion_tokens_max,finish_reasons
+qwen,noctx,260,17.9,33.9,155.9,8808.0,490,1610,stop=260
+qwen,ctx,260,15.4,15.9,38.4,4129.0,448,1134,stop=260
+timeomni,noctx,260,22.1,40.5,238.7,10535.0,573,3400,length=3;stop=257
+timeomni,ctx,260,21.8,26.3,109.7,6835.0,638,3379,length=6;stop=254

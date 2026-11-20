@@ -1,0 +1,6 @@
+gauge_id,source,area_nldi_km2,area_camels_km2,deviation_pct,flag
+11264500,nwissite,470.2,467.98,0.5,False
+14305500,nwissite,526.7,526.33,0.1,False
+01047000,nwissite,905.0,909.1,-0.4,False
+04127997,nwissite,461.1,487.16,-5.3,False
+06906800,nwissite,1414.4,1414.75,-0.0,False
