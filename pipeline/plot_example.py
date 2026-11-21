@@ -47,10 +47,10 @@ STYLE = {
 
 o = pd.Timestamp(ORIGIN)
 fig, ax = plt.subplots(figsize=(6.3, 4.2))
-win = obs[o - pd.Timedelta(days=14): o + pd.Timedelta(days=7)]
+win = obs[o - pd.Timedelta(days=13): o + pd.Timedelta(days=7)]   # 14 history days incl. origin
 ax.plot(win.index, win.values, color="black", lw=2.4, label="Observed", zorder=10)
 ax.axvline(o, color="black", lw=0.8, ls=(0, (3, 3)))
-ax.text(o, 70, " origin", ha="left", va="top", fontsize=9)
+ax.text(o, 0.215, "origin ", ha="right", va="bottom", fontsize=9)
 ax.axvspan(win.index[0], o, color="#f2f2f2", zorder=0)
 ax.text(win.index[0] + pd.Timedelta(days=0.3), 70, "history (last 14 of 90 days)",
         ha="left", va="top", fontsize=9, color="#555555")

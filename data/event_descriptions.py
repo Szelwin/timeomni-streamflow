@@ -17,7 +17,7 @@ mix melt with rain retained in the snowpack, and (b) the melt caused by rain on 
 day appears in the following days, i.e. evaluating it would require future data.
 
 Prompt format follows TimeOmni-1's event-aware forecasting task (Guan et al., 2026,
-Appendix D.2 and Table 7): numeric history, dated event lines, then the forecast window.
+Appendix E.2 and Table 7): numeric history, dated event lines, then the forecast window.
 
 LEAKAGE RULE: every function receives the full time series but uses only data up to and
 including the forecast origin. check_no_leakage() verifies this by perturbing all values

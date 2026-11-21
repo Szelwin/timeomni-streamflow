@@ -14,6 +14,7 @@ are called as-is.
 | `tokenizer/` | Qwen2.5 tokenizer files (`Qwen/Qwen2.5-7B-Instruct`); identical vocab and chat template to `anton-hugging/TimeOmni-1-7B` (md5 of `vocab.json` equal, `chat_template` string-equal). Used only to count prompt tokens. |
 | `run_runpod.py` | replacement for `eval/inference.py`; writes repo-compatible JSONL to `outputs/` |
 | `score.sh` | runs the repo's unmodified `eval/get_score.py` on a JSONL; writes `results/*_results.json` |
+| `bootstrap_ci.py` | 95 % bootstrap intervals for MAE and SR of the four 100-item runs (items resampled 100,000 times, seed 42); writes `results/bootstrap_ci.csv` |
 | `outputs/` | raw model generations (one JSON object per line, incl. `_meta` with token usage, finish reason, latency) |
 | `results/` | scored files: element 0 is the summary (`valid_score` = MAE on valid answers, `success_rate` = SR) |
 

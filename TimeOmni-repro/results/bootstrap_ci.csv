@@ -1,0 +1,5 @@
+model,split,n,valid,mae_valid,mae_ci_low,mae_ci_high,sr_pct,sr_ci_low,sr_ci_high,draws,seed
+timeomni,id,100,90,15.06,13.0,17.2,90.0,84.0,95.0,100000,42
+timeomni,ood,100,81,151.9,137.0,167.8,81.0,73.0,88.0,100000,42
+qwen,id,100,55,22.0,16.5,30.3,55.0,45.0,65.0,100000,42
+qwen,ood,100,46,132.12,113.8,151.3,46.0,36.0,56.0,100000,42

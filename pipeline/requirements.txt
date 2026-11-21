@@ -1,9 +1,10 @@
-aiohttp
-numpy
-pandas
-pytest
-tqdm
-transformers   # tokenizer only (no torch needed)
-statsmodels
-scipy
-matplotlib
+# versions of the virtual environment in which all runs of the thesis were made (Python 3.10.22)
+aiohttp==3.14.5
+numpy==2.2.6
+pandas==2.3.3
+pytest==9.1.1
+tqdm==4.70.1
+transformers==5.20.2   # tokenizer only (no torch needed)
+statsmodels==0.15.0
+scipy==1.15.3
+matplotlib==3.10.9

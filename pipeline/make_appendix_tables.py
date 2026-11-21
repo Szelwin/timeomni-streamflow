@@ -70,7 +70,7 @@ def by_gauge_tables(fname, suffix, title_suffix):
                 rows.append("    \\addlinespace")
         header = ("Configuration        & Lead & " + " & ".join(GAUGE_NAME[g] for g in GAUGES))
         n_note = ("$n = 52$ target days per cell" if suffix == "" else
-                  "$n$ = approved target days per cell (35--52)")
+                  "$n$ = target days not flagged as estimated per cell (35--52)")
         src = (f"own results; {n_note}; " +
                ("MASE scaled by the pre-test one-step persistence MAE of each catchment"
                 if measure == "MASE" else
@@ -121,13 +121,13 @@ def pooled_approved():
            "in mm/day; MASE scaled as in \\cref{tab:pooled-accuracy}; NSE per catchment, "
            "pooled as mean and median over the five catchments")
     write("tab-pooled-approved.tex",
-          table("Pooled forecast accuracy on approved discharge days only",
+          table("Pooled forecast accuracy excluding estimated target days",
                 "tab:app-pooled-approved", "lrrrrrrr", header, rows, src))
 
 
 def convergence_table():
     specs = json.load(open(config.HERE / "outputs" / "baselines" / "specs.json"))
-    rows = []
+    rows, stopped = [], []
     for g in GAUGES:
         s = specs[g]
         fits = pd.read_csv(config.HERE / "outputs" / "baselines" / f"{g}_fits.csv")
@@ -136,6 +136,8 @@ def convergence_table():
         ets_form = (("damped trend" if s["ets"]["damped_trend"] else "additive trend")
                     if s["ets"]["trend"] else "no trend")
         arima_form = "(" + ", ".join(str(x) for x in s["arima"]["order"]) + ")"
+        bad = fits[(fits.model == "arima") & ~fits["converged"].astype(bool)]
+        stopped += [int(i) for i in bad["iterations"]]
         rows.append(f"    {GAUGE_NAME[g]:<12} & {ets_form:<14} & {conv['ets']}/{n['ets']} & "
                     f"{arima_form:<9} & {conv['arima']}/{n['arima']} & "
                     f"{s['seconds_selection']:.0f} & {s['seconds_total']:.0f} \\\\")
@@ -143,8 +145,10 @@ def convergence_table():
               "Sel. s & Total s")
     src = ("own results; forms selected by AICc on the pre-test period "
            "(\\cref{tab:baseline-forms}); conv. = converged refits out of the 52 per model; "
-           "non-converged refits are stops at the optimiser's iteration limit of 500 with the "
-           "forecast retained; Sel. = seconds for form selection, Total = seconds for selection "
+           f"the {len(stopped)} ARIMA refits not reported as converged ended after "
+           f"{', '.join(str(i) for i in sorted(stopped))} iterations (limit 500) when the line "
+           "search of the optimiser terminated abnormally (L-BFGS-B warning flag 2) with all "
+           "gradient components below $10^{-3}$; the estimates at termination were used; Sel. = seconds for form selection, Total = seconds for selection "
            "and all refits of both models, one process per catchment on an Apple M4 Pro")
     write("tab-convergence.tex",
           table("Selected baseline forms, convergence and run time per catchment",
@@ -157,16 +161,17 @@ def wy2025_table():
     for g in GAUGES:
         s = df[df.gauge.astype(str).str.zfill(8) == g].iloc[0]
         rows.append(f"    {GAUGE_NAME[g]:<12} & {int(s['n_pretest_wy'])} & "
-                    f"{s['q_mean_wy2025']:.2f} & {s['q_mean_pct_rank']:.0f} & "
-                    f"{s['q_median_wy2025']:.2f} & {s['q_median_pct_rank']:.0f} & "
-                    f"{s['q_max_wy2025']:.1f} & {s['q_max_pct_rank']:.0f} & "
-                    f"{s['p_total_wy2025']:.0f} & {s['p_total_pct_rank']:.0f} \\\\")
+                    f"{s['q_mean_wy2025']:.2f} & {s['q_mean_pct_rank']:.1f} & "
+                    f"{s['q_median_wy2025']:.2f} & {s['q_median_pct_rank']:.1f} & "
+                    f"{s['q_max_wy2025']:.1f} & {s['q_max_pct_rank']:.1f} & "
+                    f"{s['p_total_wy2025']:.0f} & {s['p_total_pct_rank']:.1f} \\\\")
     header = ("Catchment    & WYs & $\\bar{Q}$ & Pct & $\\tilde{Q}$ & Pct & "
               "$Q_{\\max}$ & Pct & $P$ & Pct")
     src = ("own results; WYs = complete pre-test water years; $\\bar{Q}$, $\\tilde{Q}$, "
            "$Q_{\\max}$ = mean, median and maximum daily discharge of WY 2025 in mm/day; "
            "$P$ = total precipitation of WY 2025 in mm; Pct = percentile rank of the WY 2025 "
-           "value among the pre-test water years")
+           "value among the pre-test water years, that is the share of those years, in per cent, "
+           "with a value not above that of WY 2025")
     write("tab-wy2025-context.tex",
           table("Water year 2025 relative to the pre-test water years of each catchment",
                 "tab:app-wy2025", "lrrrrrrrrr", header, rows, src, "4.5pt"))
@@ -202,7 +207,7 @@ def event_frequency_table():
 
 if __name__ == "__main__":
     by_gauge_tables("metrics_by_gauge.csv", "", "")
-    by_gauge_tables("metrics_by_gauge_approved.csv", "_approved", " (approved days only)")
+    by_gauge_tables("metrics_by_gauge_approved.csv", "_approved", " (estimated days excluded)")
     regime_tables()
     pooled_approved()
     convergence_table()

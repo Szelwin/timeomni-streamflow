@@ -181,7 +181,7 @@ def process_gauge(args_tuple):
     warnings.simplefilter("ignore")
     cache = BASELINE_DIR / f"{gauge}.csv"
     if cache.exists() and not force:
-        return gauge, pd.read_csv(cache, dtype={"gauge": str}), None
+        return gauge, pd.read_csv(cache, dtype={"gauge": str}, float_precision="round_trip"), None
     import warnings as _w; _w.simplefilter("ignore")   # spawned process (macOS) re-imports without the filter
     t = time.time()
     specs = select_specs(gauge, models) if {"ets", "arima"} & set(models) else {}

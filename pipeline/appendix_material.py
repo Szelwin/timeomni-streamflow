@@ -21,6 +21,16 @@ def rows(model, ctx):
         return [json.loads(l) for l in f]
 
 
+ASCII_PUNCT = str.maketrans({"\u2018": "'", "\u2019": "'", "\u201c": '"', "\u201d": '"',
+                             "\u2013": "-", "\u2014": "-", "\u2026": "..."})
+
+
+def listing_text(s: str) -> str:
+    """Text for the thesis listings: typographic quotes and dashes as ASCII (the listings
+    package misplaces them); everything else, including the degree sign, is unchanged."""
+    return s.translate(ASCII_PUNCT)
+
+
 def main():
     lines, stats = [], []
     for model in config.MODELS:
@@ -38,7 +48,7 @@ def main():
                           "latency_mean_s": round(st.mean(lat), 1),
                           "latency_max_s": round(max(lat), 1),
                           "latency_sum_s": round(sum(lat), 0),
-                          "completion_tokens_median": int(st.median(comp)),
+                          "completion_tokens_median": float(st.median(comp)),
                           "completion_tokens_max": max(comp),
                           "finish_reasons": ";".join(f"{k}={v}" for k, v in sorted(fin.items(), key=str))})
             ex = [d for d in data if d["gauge"] == GAUGE and d["origin"] == ORIGIN][0]
@@ -60,10 +70,10 @@ def main():
         for ctx in config.CONTEXTS:
             ex = [d for d in rows(model, ctx) if d["gauge"] == GAUGE and d["origin"] == ORIGIN][0]
             if model == "qwen":
-                (app / f"prompt-{ctx}.txt").write_text(ex["messages"][1]["content"] + "\n")
+                (app / f"prompt-{ctx}.txt").write_text(listing_text(ex["messages"][1]["content"]) + "\n")
                 if ctx == "noctx":
-                    (app / "prompt-system.txt").write_text(ex["messages"][0]["content"] + "\n")
-            (app / f"answer-{model}-{ctx}.txt").write_text(ex["pred_rat"].strip() + "\n")
+                    (app / "prompt-system.txt").write_text(listing_text(ex["messages"][0]["content"]) + "\n")
+            (app / f"answer-{model}-{ctx}.txt").write_text(listing_text(ex["pred_rat"].strip()) + "\n")
     import csv
     with open(OUT / "latency_stats.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(stats[0].keys()))
